@@ -1,0 +1,20 @@
+head(vehicle)
+# Give the columns names you intend to use in the model
+pairs(vehicle[3:5]) 
+
+# Multiple Linear Regression
+results <- lm(lc~Mileage+lh,vehicle)
+results
+summary(results)
+
+
+reduced <- lm(lc~lh,vehicle)
+full <- lm(lc~Mileage+lh,vehicle)
+
+# to check variability of model
+
+anova(reduced,full)
+
+# Prediction (default=95% confidence)
+
+predict(reduced,data.frame(lh=10),interval="confidence")
