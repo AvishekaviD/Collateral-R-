@@ -1,0 +1,47 @@
+##setting your working directory
+
+setwd("E:\\R\\")
+
+##Reading the source file
+
+train <- read.csv("C:\\Users\\admin\\Desktop\\Logistic\\Logistic.csv")
+
+### reading top 6 rows
+head(train)
+
+###Summary of the data
+summary(train)
+
+##Creating test data and training data
+library(caTools)
+split <- sample.split(train$Responded, SplitRatio = 0.75)
+
+
+#get training and test data
+dresstrain <- subset(train, split == TRUE)
+dresstest <- subset(train, split == FALSE)
+
+###logistic function using glm
+
+
+model <-glm(formula = Responded ~ Age + Gender + LSM + Language , data = dresstrain , family = "binomial" )
+model <-glm(formula = Responded ~ Campaign.Channel , data = dresstrain , family = "binomial" )
+
+##summary of the output
+summary(model)
+
+
+##testing for new record
+newdata <- data.frame(Campaign.Channel = dresstest$Campaign.Channel)
+predict(model, newdata, type = 'response')
+
+ 
+##Confusion matrix
+table(train$Responded, predict > 0.5)
+
+#ROCR Curve
+library(ROCR)
+ROCRpred <- prediction(predict, train$Responded)
+ROCRperf <- performance(ROCRpred, 'tpr','fpr')
+plot(ROCRperf, colorize = TRUE, text.adj = c(-0.2,1.7))
+
