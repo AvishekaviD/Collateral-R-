@@ -1,0 +1,35 @@
+#Read data file
+mydata <- read.csv("~/Dropbox/Public/Cardiotocographic.csv")
+mydata$NSPF <- as.factor(mydata$NSP)
+
+#Split data into Training (80%) and Validation (20%) datasets
+set.seed(123)
+ind <- sample(2,nrow(mydata),replace=TRUE, prob=c(0.8,.2))
+tdata <- mydata[ind==1,]
+vdata <- mydata[ind==2,]
+
+#Multinomial Logistic regression
+library(nnet)
+mydata$out<-relevel(mydata$NSPF, ref="1")
+mymodel<-multinom(out~LB+AC+FM, data=mydata)
+summary(mymodel)
+
+#Predict
+predict(mymodel,mydata)
+
+predict(mymodel,mydata[c(3,100,120),],type="prob")
+
+# Misclassification error
+
+cm = table(predict(mymodel),mydata$NSPF)
+print(cm)
+
+# Misclassification %
+
+1-sum(dia(cm)/sum(cm))
+
+                    
+#2-tailed z test
+z <- summary(mymodel)$coefficients/summary(mymodel)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
+p
