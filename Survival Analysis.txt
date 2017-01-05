@@ -1,0 +1,69 @@
+﻿
+library(survival)
+
+setwd (“D:/”)
+mydata <- read.csv (“D:/worksheet.csv”)
+attach(mydata)
+
+
+Cust <- Customer_id
+l_resp <- Last_Response_tag
+Plat <- Platinum_flag
+span <- Months
+Resp <- Purchase_2k
+X <- cbind(l_resp,Plat)
+
+kmsurv <- survfit(Surv(span,Resp) ~ 1)
+summary(kmsurv)
+plot(kmsurv,xlab = “span”,ylab=”Survival Proabability”)
+
+
+group1 <- l_resp
+group2<- Plat
+kmsurv1 <- survfit(Surv(span,Resp) ~ group1)
+summary(kmsurv1)
+plot(kmsurv1,xlab = “span”,ylab=”Survival Proabbility”)
+
+#Cox-hazard model
+coxph <- coxph(Surv(span,Resp)~X,method = “breslow”)
+summary(coxph)
+
+
+
+
+
+
+
+
+
+
+#####code 2
+
+
+##test data is also there pbc.xlsx
+
+#Package Installation
+install.packages("survival")
+
+#Creation of basic syntax
+Surv(time,event)
+survfit(formula)  #time is the follow up time until the event occurs. # event indicates the status of occurrence of the expected event # formula is the relationship between the predictor variables\
+
+
+# Load the library.
+library("survival")
+
+# Print first few rows.
+print(head(pbc))
+
+# Create the survival object. 
+survfit(Surv(pbc$time,pbc$status == 2)~1)
+
+# Give the chart file a name.
+png(file = "survival.png")
+
+# Plot the graph. 
+plot(survfit(Surv(pbc$time,pbc$status == 2)~1))
+
+# Save the file.
+dev.off()
